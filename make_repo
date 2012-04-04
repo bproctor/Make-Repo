@@ -1,0 +1,84 @@
+#!/bin/sh
+
+# Change this to where you want to store your repos
+gitdir="/Volumes/Interactive/git/"
+
+####################################################
+
+name=`basename $0`
+version='1.0'
+clone=0
+bare=1
+
+#
+# Output the usage message
+#
+usage() {
+	echo "Usage: $name [options] reponame"
+	echo ""
+	echo "Options:"
+	echo "    -b, --bare         Do not create initial commit"
+	echo "    -c, --clone        Clone the repository"
+	echo "    -h, --help         Show this help message"
+	echo "    -v, --version      Get the version of this program"
+	echo ""
+}
+
+if [ -z "$1" ]; then
+	usage
+	exit 0
+fi
+
+#
+# Process options
+#
+while :; do
+	case "$1" in
+		-h|--help)
+			usage
+			exit 0
+			;;
+		-b|--bare)
+			bare=0
+			shift
+			;;
+		-c|--clone)
+			clone=1
+			shift
+			;;
+		-v|--version)
+			echo "$name, Version $version"
+			exit 0
+			;;
+		-*)
+      		# Unexpected option
+      		usage
+      		exit 2
+      		;;
+      	*)
+      		break
+      		;;
+	esac
+done
+
+#
+# Do the work
+#
+repo=`echo $1 | sed "s/\.git//g"`
+
+if [ ! -d "$gitdir$repo.git" ]; then
+	(cd $gitdir && git init --bare $repo.git)
+	if [[ $bare -eq 1 ]]; then
+		git clone $gitdir$repo.git /tmp/$repo
+		echo -e ".DS_Store\nnbproject" > /tmp/$repo/.gitignore
+		(cd /tmp/$repo && git add .gitignore)
+		(cd /tmp/$repo && git commit -m "Creating initial repository")
+		(cd /tmp/$repo && git push origin master)
+		rm -rf /tmp/$repo
+		if [[ $clone -eq 1 ]]; then
+			git clone $gitdir$repo.git
+		fi
+	fi
+else
+	echo "Error: Repository already exists"
+fi
