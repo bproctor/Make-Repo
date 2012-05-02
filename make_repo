@@ -70,7 +70,7 @@ if [ ! -d "$gitdir$repo.git" ]; then
 	(cd $gitdir && git init --bare $repo.git)
 	if [[ $bare -eq 1 ]]; then
 		git clone $gitdir$repo.git /tmp/$repo
-		echo -e ".DS_Store\nnbproject" > /tmp/$repo/.gitignore
+		echo ".DS_Store\nnbproject" > /tmp/$repo/.gitignore
 		(cd /tmp/$repo && git add .gitignore)
 		(cd /tmp/$repo && git commit -m "Creating initial repository")
 		(cd /tmp/$repo && git push origin master)
