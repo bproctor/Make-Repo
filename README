@@ -1,0 +1,11 @@
+This little script was used at my last job to create new empty repos on the shared network drive.  It creates the repo,
+and sets remote origin, and optionally clones it to your current working directory for you.
+
+To get started, just change "gitdir" in the script to where you want to put your repos and you are good to go.
+
+Usage: make_repo [options] reponame
+Options:
+	-b, --bare         Do not create initial commit
+	-c, --clone        Clone the repository
+	-h, --help         Show this help message
+	-v, --version      Get the version of this program
